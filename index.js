@@ -45,8 +45,17 @@ bot.on("callback_query", function (query) {
     if (query.game_short_name !== "Miningspace") {
         bot.answerCallbackQuery(query.id, "Sorry, '" + query.game_short_name + "' is not available.");
     } else {
-        // No link is sent to chat, just answering the callback query
-        bot.answerCallbackQuery(query.id);
+        // Ensure that 'queries' is defined before this line
+        if (!queries) {
+            queries = {}; // Initialize 'queries' if it's not defined
+        }
+        queries[query.id] = query;
+
+        let gameurl = "https://alexdash555.github.io/Mining-Space-server/"; // Replace with the actual game URL
+        bot.answerCallbackQuery(query.id, { url: gameurl });
+
+        // We remove the part that sends the URL in a chat message
+        // No more URL sharing in the chatbot
     }
 });
 
