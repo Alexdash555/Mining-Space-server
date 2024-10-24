@@ -39,6 +39,7 @@ bot.on("callback_query", function (query) {
         queries[query.id] = query;
         let gameurl = "https://alexdash555.github.io/Mining-Space-server/"; // Replace with the actual game URL
         bot.answerCallbackQuery(query.id, { url: gameurl });
+    }  // <-- This closing brace was missing
 });
 
 // Handle inline queries
