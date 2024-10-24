@@ -10,7 +10,7 @@ const bot = new TelegramBot(TOKEN);
 server.use(express.static(path.join(__dirname, 'Build')));
 
 // Set the webhook
-bot.setWebHook(`https://your-app-name.onrender.com/bot${TOKEN}`); // Replace with your Render app URL
+bot.setWebHook(`https://mining-space-server.onrender.com/${TOKEN}`); // Replace with your Render app URL
 
 // Handle Telegram updates via webhook
 server.post(`/bot${TOKEN}`, (req, res) => {
