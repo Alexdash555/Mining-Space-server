@@ -1,10 +1,14 @@
 const express = require("express");
 const path = require("path");
+const bodyParser = require("body-parser");
 const TelegramBot = require("node-telegram-bot-api");
 
-const TOKEN = process.env.TOKEN || "7765845308:AAHcd9rFpYDhL60r--clJwl6xU1yYG7vGgM" // Ensure this is correct
+const TOKEN = process.env.TOKEN || "7765845308:AAFs2yDsgQyBWTsXyjIhgE7VsWwzRrpKPrM"; // Make sure this is correct
 const server = express();
 const bot = new TelegramBot(TOKEN);
+
+// Middleware to parse JSON request bodies
+server.use(bodyParser.json());
 
 // Serve static files from the 'Build' folder
 server.use("/Build", express.static(path.join(__dirname, 'Build')));
@@ -28,53 +32,38 @@ server.post(`/bot${TOKEN}`, (req, res) => {
     }
 });
 
-// Handle the other commands like before
-bot.onText(/help/, (msg) => bot.sendMessage(msg.from.id, "Say /game if you want to play."));
+// Handle the /help command
+bot.onText(/help/, (msg) => {
+    if (msg && msg.from) {
+        bot.sendMessage(msg.from.id, "Say /game if you want to play.");
+    }
+});
 
-// Start and game commands handler
+// Handle the /start or /game command
 bot.onText(/start|game/, (msg) => {
-    if (msg && msg.from && msg.from.id) {
+    if (msg && msg.from) {
         bot.sendGame(msg.from.id, "Miningspace");
-    } else {
-        console.log("Invalid message object or user ID.");
     }
 });
 
 // Handle callback queries
-bot.on("callback_query", function (query) {
-    if (query.game_short_name !== "Miningspace") {
-        bot.answerCallbackQuery(query.id, "Sorry, '" + query.game_short_name + "' is not available.");
-    } else {
-        // Ensure that 'queries' is defined before this line
-        if (!queries) {
-            queries = {}; // Initialize 'queries' if it's not defined
-        }
-        queries[query.id] = query;
-
+bot.on("callback_query", (query) => {
+    if (query && query.game_short_name === "Miningspace") {
         let gameurl = "https://alexdash555.github.io/Mining-Space-server/"; // Replace with the actual game URL
         bot.answerCallbackQuery(query.id, { url: gameurl });
-
-        // Ensure 'query.message' exists before accessing it
-        if (query.message) {
-            // No need to send a message in the chat, so this part can remain commented or removed
-            // bot.sendMessage(query.message.chat.id, "Game link: " + gameurl);
-        } else {
-            console.log("No message object in callback_query.");
-        }
+    } else {
+        bot.answerCallbackQuery(query.id, "Sorry, that game is not available.");
     }
 });
 
-
 // Handle inline queries
-bot.on("inline_query", function (iq) {
+bot.on("inline_query", (iq) => {
     if (iq && iq.id) {
         bot.answerInlineQuery(iq.id, [{
             type: "game",
             id: "0",
             game_short_name: "Miningspace"
         }]);
-    } else {
-        console.log("Invalid inline query object.");
     }
 });
 
