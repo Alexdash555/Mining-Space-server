@@ -54,10 +54,16 @@ bot.on("callback_query", function (query) {
         let gameurl = "https://alexdash555.github.io/Mining-Space-server/"; // Replace with the actual game URL
         bot.answerCallbackQuery(query.id, { url: gameurl });
 
-        // We remove the part that sends the URL in a chat message
-        // No more URL sharing in the chatbot
+        // Ensure 'query.message' exists before accessing it
+        if (query.message) {
+            // No need to send a message in the chat, so this part can remain commented or removed
+            // bot.sendMessage(query.message.chat.id, "Game link: " + gameurl);
+        } else {
+            console.log("No message object in callback_query.");
+        }
     }
 });
+
 
 // Handle inline queries
 bot.on("inline_query", function (iq) {
