@@ -6,6 +6,7 @@ const TelegramBot = require("node-telegram-bot-api");
 const TOKEN = process.env.TOKEN || "7765845308:AAHcd9rFpYDhL60r--clJwl6xU1yYG7vGgM"; // Ensure this is correct
 const server = express();
 const bot = new TelegramBot(TOKEN);
+const queries = {};  // This line defines the queries object
 
 // Middleware to parse JSON request bodies
 server.use(bodyParser.json()); 
@@ -39,7 +40,7 @@ bot.on("callback_query", function (query) {
         queries[query.id] = query;
         let gameurl = "https://alexdash555.github.io/Mining-Space-server/"; // Replace with the actual game URL
         bot.answerCallbackQuery(query.id, { url: gameurl });
-    }  // <-- This closing brace was missing
+    }
 });
 
 // Handle inline queries
