@@ -4,7 +4,7 @@ const TelegramBot = require("node-telegram-bot-api");
 
 const TOKEN = process.env.TOKEN || "7765845308:AAHcd9rFpYDhL60r--clJwl6xU1yYG7vGgM"; // Ensure this is correct
 const server = express();
-const bot = new TelegramBot(TOKEN);
+const bot = new TelegramBot(TOKEN, { polling: true });
 
 // Serve static files from the 'Build' folder
 server.use("/Build", express.static(path.join(__dirname, 'Build')));
@@ -31,35 +31,43 @@ server.post(`/bot${TOKEN}`, (req, res) => {
 // Handle the other commands like before
 bot.onText(/help/, (msg) => bot.sendMessage(msg.from.id, "Say /game if you want to play."));
 
-bot.onText(/start|game/, (msg) => bot.sendGame(msg.from.id, "Miningspace"));
+// Start and game commands handler
+bot.onText(/start|game/, (msg) => {
+    // Ensure `msg` object and `msg.from.id` are valid before proceeding
+    if (msg && msg.from && msg.from.id) {
+        bot.sendGame(msg.from.id, "Miningspace");
+    } else {
+        console.log("Invalid message object or user ID.");
+    }
+});
 
 bot.on("callback_query", function (query) {
     if (query.game_short_name !== "Miningspace") {
         bot.answerCallbackQuery(query.id, "Sorry, '" + query.game_short_name + "' is not available.");
     } else {
-        queries[query.id] = query;
         let gameurl = "https://alexdash555.github.io/Mining-Space-server/"; // Replace with the actual game URL
-        
         bot.answerCallbackQuery(query.id, { url: gameurl });
 
-        // Check if query.message exists before using it
-        if (query.message) {
-            // Process the message query
+        // Safely check if query.message exists before accessing it
+        if (query.message && query.message.chat && query.message.chat.id) {
             bot.sendMessage(query.message.chat.id, "Game link: " + gameurl);
         } else {
-            // If no message, log or handle this case
-            console.log("No message object in callback_query.");
+            console.log("No message object or chat ID in callback_query.");
         }
     }
 });
 
 // Handle inline queries
 bot.on("inline_query", function (iq) {
-    bot.answerInlineQuery(iq.id, [{
-        type: "game",
-        id: "0",
-        game_short_name: "Miningspace"
-    }]);
+    if (iq && iq.id) {
+        bot.answerInlineQuery(iq.id, [{
+            type: "game",
+            id: "0",
+            game_short_name: "Miningspace"
+        }]);
+    } else {
+        console.log("Invalid inline query object.");
+    }
 });
 
 // Start the server
