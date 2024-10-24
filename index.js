@@ -39,7 +39,17 @@ bot.on("callback_query", function (query) {
     } else {
         queries[query.id] = query;
         let gameurl = "https://alexdash555.github.io/Mining-Space-server/"; // Replace with the actual game URL
+        
         bot.answerCallbackQuery(query.id, { url: gameurl });
+
+        // Check if query.message exists before using it
+        if (query.message) {
+            // Process the message query
+            bot.sendMessage(query.message.chat.id, "Game link: " + gameurl);
+        } else {
+            // If no message, log or handle this case
+            console.log("No message object in callback_query.");
+        }
     }
 });
 
