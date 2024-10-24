@@ -2,9 +2,9 @@ const express = require("express");
 const path = require("path");
 const TelegramBot = require("node-telegram-bot-api");
 
-const TOKEN = process.env.TOKEN || "7765845308:AAHcd9rFpYDhL60r--clJwl6xU1yYG7vGgM"; // Ensure this is correct
+const TOKEN = process.env.TOKEN || "7765845308:AAHcd9rFpYDhL60r--clJwl6xU1yYG7vGgM" // Ensure this is correct
 const server = express();
-const bot = new TelegramBot(TOKEN, { polling: true });
+const bot = new TelegramBot(TOKEN);
 
 // Serve static files from the 'Build' folder
 server.use("/Build", express.static(path.join(__dirname, 'Build')));
@@ -33,7 +33,6 @@ bot.onText(/help/, (msg) => bot.sendMessage(msg.from.id, "Say /game if you want 
 
 // Start and game commands handler
 bot.onText(/start|game/, (msg) => {
-    // Ensure `msg` object and `msg.from.id` are valid before proceeding
     if (msg && msg.from && msg.from.id) {
         bot.sendGame(msg.from.id, "Miningspace");
     } else {
@@ -41,6 +40,7 @@ bot.onText(/start|game/, (msg) => {
     }
 });
 
+// Handle callback queries
 bot.on("callback_query", function (query) {
     if (query.game_short_name !== "Miningspace") {
         bot.answerCallbackQuery(query.id, "Sorry, '" + query.game_short_name + "' is not available.");
