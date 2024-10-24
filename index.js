@@ -46,7 +46,12 @@ bot.on("callback_query", function (query) {
         bot.answerCallbackQuery(query.id, "Sorry, '" + query.game_short_name + "' is not available.");
     } else {
         let gameurl = "https://alexdash555.github.io/Mining-Space-server/"; // Replace with the actual game URL
+        
+        // Answer the callback query with the game URL (without sending it in chat)
         bot.answerCallbackQuery(query.id, { url: gameurl });
+
+        // Removed bot.sendMessage to avoid sending the link in chat
+    }
 });
 
 // Handle inline queries
