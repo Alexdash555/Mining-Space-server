@@ -36,9 +36,9 @@ bot.on("callback_query", function (query) {
     if (query.game_short_name !== "Miningspace") {
         bot.answerCallbackQuery(query.id, "Sorry, '" + query.game_short_name + "' is not available.");
     } else {
+        queries[query.id] = query;
         let gameurl = "https://alexdash555.github.io/Mining-Space-server/"; // Replace with the actual game URL
         bot.answerCallbackQuery(query.id, { url: gameurl });
-    }
 });
 
 // Handle inline queries
