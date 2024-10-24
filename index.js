@@ -34,6 +34,11 @@ bot.onText(/help/, (msg) => bot.sendMessage(msg.from.id, "Say /game if you want 
 bot.onText(/start|game/, (msg) => bot.sendGame(msg.from.id, "Miningspace"));
 
 bot.on("callback_query", function (query) {
+    // Respond immediately to avoid timeout errors
+    bot.answerCallbackQuery(query.id).catch((err) => {
+        console.error("Error responding to callback query:", err);
+    });
+
     if (query.game_short_name !== "Miningspace") {
         bot.answerCallbackQuery(query.id, "Sorry, '" + query.game_short_name + "' is not available.");
     } else {
